@@ -50,11 +50,11 @@ public class NoticeDaoImpl implements NoticeDao {
 
 
 	@Override
-	public Notice selectNoticeByNo(Notice notice) throws SQLException {
+	public Notice selectNoticeByNo(int notice) throws SQLException {
 		String sql = "select * from notice where no = ?";
 		try(Connection con = DriverManager.getConnection(jdbcDriver);
 				PreparedStatement pstmt = con.prepareStatement(sql)) {
-			pstmt.setInt(1, notice.getNo());
+			pstmt.setInt(1, notice);
 			try(ResultSet rs = pstmt.executeQuery()) {
 				while(rs.next()) {
 					return getNotice(rs);
@@ -95,15 +95,16 @@ public class NoticeDaoImpl implements NoticeDao {
 	}
 
 	@Override
-	public int deleteNotice(Notice notice) throws SQLException {
+	public int deleteNotice(int notice) throws SQLException {
 		int res = -1;
 		String sql = "delete from notice where no = ?";
 		try(Connection con = DriverManager.getConnection(jdbcDriver);
 				PreparedStatement pstmt = con.prepareStatement(sql)) {
-			pstmt.setInt(1, notice.getNo());
+			pstmt.setInt(1, notice);
 			res = pstmt.executeUpdate();
 		}
 		return res;
 	}
+
 
 }

@@ -8,8 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kroryi.yi_bank.dao.NoticeDao;
 import kroryi.yi_bank.dao.impl.NoticeDaoImpl;
+import kroryi.yi_bank.dto.Notice;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 
@@ -28,17 +31,26 @@ public class NoticeDeleteHandler extends HttpServlet {
     }
 
     protected void process(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, SQLException {
-        // Retrieve notice number from request parameters
-        String noticeNoStr = req.getParameter("noticeNo");
 
-        // Check if the noticeNo parameter is not null and is a valid integer
-        if (noticeNoStr != null && noticeNoStr.matches("\\d+")) {
-            int noticeNo = Integer.parseInt(noticeNoStr);
 
-            // Call the deleteNotice method with the retrieved notice number
+        BufferedReader reader = req.getReader();
+        StringBuilder jsonInput = new StringBuilder();
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            jsonInput.append(line);
+        }
+
+//        System.out.println(jsonInput);
+        String noticeNoString = jsonInput.toString().replaceAll("[^0-9]", "");
+        int noticeNo = Integer.parseInt(noticeNoString);
+
+        System.out.println(noticeNo);
+
+            // 가져온 공지 번호로 deleteNotice 메서드 호출
             int result = noticeDao.deleteNotice(noticeNo);
 
-            // Results determine the response
+            // 결과에 따라 응답
             res.setContentType("application/json");
             res.setCharacterEncoding("utf-8");
             PrintWriter out = res.getWriter();
@@ -50,14 +62,6 @@ public class NoticeDeleteHandler extends HttpServlet {
             }
 
             out.flush();
-        } else {
-            // Handle the case where noticeNo parameter is missing or not a valid integer
-            res.setContentType("application/json");
-            res.setCharacterEncoding("utf-8");
-            PrintWriter out = res.getWriter();
-            out.print(gson.toJson("invalid noticeNo parameter"));
-            out.flush();
         }
-    }
 
 }

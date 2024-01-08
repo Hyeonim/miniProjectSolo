@@ -71,7 +71,7 @@
         }
 
         #notice span#subject {
-            width: 366px;
+            width: 340px;
         }
 
         #notice span#subject a {
@@ -84,8 +84,7 @@
         }
 
         #notice span#date {
-            width: 187px;
-            text-align: right;
+            width: 160px;
         }
     </style>
 </head>
@@ -93,22 +92,22 @@
 <body>
 <div id="notice">
 
-<ul id="noticeList">
-    <h1>공지사항</h1>
-</ul>
+    <ul id="noticeList">
+        <h1>공지사항</h1>
+    </ul>
 
     <button id="goToNoticeBtn">공지 추가</button>
 
 </div>
 
 
-
 <script>
     // AJax 기본 베이스 코드
     $(document).ready(function () {
+
         $.ajax({
             url: "/main/notice.do",
-            type: 'GET',
+            type: 'POST',
             dataType: 'json',
             success: function (data) {
                 if (data && data.length > 0) {
@@ -119,12 +118,16 @@
                             <span id="subject"> ${item.subject} </span>
                             <span id="writer"> ${item.writer} </span>
                             <span id="date"> ${item.writeDate} </span>
-                               <button id="delBtn">삭제</button>
+                            <button id="updBtn">수정</button>
+                            <button id="delBtn">삭제</button>
                             </li>
                         `;
 
                         userList.append(listItem);
-                    })
+                    });
+
+
+
                 } else {
                     $('#noticeList').append('<li>게시물 자료가 없습니다.</li>')
                 }
@@ -139,27 +142,27 @@
             window.location.href = '/view/notice/notice_add.jsp';
         });
 
+    });
 
-
-
+    $(document).ready(function () {
 
         $('#noticeList').on('click', '#delBtn', function () {
 
             let noticeNo = $(this).closest('li').find('#no').text();
-            let clickedBtn = $(this);
 
             console.log(noticeNo);
-            console.log(clickedBtn);
+
+            let $this = $(this);
 
             // 서버에 삭제 요청 보내기
             $.ajax({
                 url: "/main/deleteNotice.do",
                 type: 'POST',
-                data: { noticeNo: noticeNo },
+                data: {noticeNo: noticeNo},
                 success: function (response) {
 
                     if (response === 'success') {
-                        $(this).closest('li').remove();
+                        $this.closest('li').remove();
                     } else {
                         alert('삭제 실패');
                     }
@@ -170,10 +173,36 @@
             });
         });
 
+    });
+
+    $(document).ready(function () {
+        $('#noticeList').on('click', '#updBtn', function () {
+
+            let noticeNo = $(this).closest('li').find('#no').text();
+
+            window.location.href = '/view/notice/notice_update.jsp?noticeNo=' + noticeNo;
+
+            console.log(noticeNo);
+
+            $.ajax({
+                url: "/main/getNotice.do",
+                type: 'POST',
+                data: {noticeNo: noticeNo},
+                success: function (response) {
+                    if (response === 'success') {
+                    } else {
+                    }
+                },
+                error: function () {
+                }
+            });
+        });
+
 
     });
 
 
-    </script>
-    </body>
-    </html>
+
+</script>
+</body>
+</html>

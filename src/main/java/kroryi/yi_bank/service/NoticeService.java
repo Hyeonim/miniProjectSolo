@@ -13,13 +13,14 @@ import java.util.List;
 public class NoticeService {
 	private NoticeDao dao;
 
+
 	public NoticeService() {
 		dao = NoticeDaoImpl.getInstance();
 	}
 	public List<Notice> showNoticeByAll() throws SQLException {
 		return dao.selectNoticeByAll();
 	}
-	public Notice showNoticeByNo(Notice notice) throws SQLException {
+	public Notice showNoticeByNo(int notice) throws SQLException {
 		return dao.selectNoticeByNo(notice);
 	}
 	public int addNotice(Notice notice) throws SQLException {
@@ -29,6 +30,8 @@ public class NoticeService {
 		return dao.updateNotice(notice);
 	}
 	public int removeNotice(Notice notice) throws SQLException {
-		return dao.deleteNotice(notice);
+		return dao.deleteNotice(notice.getNo());
 	}
+
+
 }
